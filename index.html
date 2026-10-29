@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Offices: Run the Clock and Dad View</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'DPComic';src:url('fonts/dpcomic.ttf') format('truetype');font-display:swap}
+:root{--bg:#0e1418;--panel:#162027;--line:#26343d;--text:#e8eef0;--muted:#8fa2ad;--teal:#3fc7b0;--amber:#f5b84a;--red:#e36a5d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:22px/1.35 'Patrick Hand','Nunito','Segoe UI',system-ui,sans-serif}
+h1,h3,h4,nav a,button,select,.pill,#title,.it b,#card .st{font-family:'DPComic','Fredoka',system-ui,sans-serif}
+header{display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+header h1{font-size:26px;margin:0 8px 0 0}header h1 span{color:var(--muted);font-weight:400}
+.pill{font-size:15px;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:99px;border:1px solid var(--line)}
+.pill.live{color:#4ade80;border-color:#2c6b46;background:#10241a}.pill.off{color:var(--muted)}.pill.demo{color:var(--teal);border-color:#215a52;background:#0f2422}
+.sp{flex:1}
+select,button{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 11px;font:inherit;cursor:pointer}
+button:hover{border-color:var(--teal)}
+nav{display:flex;gap:8px;padding:10px 0 0;max-width:1560px;margin:0 auto}
+nav a{font-size:22px;padding:8px 18px;border:1px solid var(--line);border-bottom:none;border-radius:10px 10px 0 0;color:var(--muted);text-decoration:none;cursor:pointer;display:flex;gap:8px;align-items:center}
+nav a.on{background:var(--panel);color:var(--text);border-color:#35505c}
+nav a .b{background:var(--teal);color:#06201c;border-radius:99px;font-size:16px;font-weight:700;padding:0 7px;min-width:20px;text-align:center}
+nav a .b.z{background:#2b3a43;color:var(--muted)}nav a .b.w{background:var(--amber);color:#2b1c00}
+#stage{position:relative;margin:0 auto;max-width:1560px;background:var(--panel);border:1px solid #35505c;border-radius:0 12px 12px 12px;padding:10px}
+#title{font-weight:700;font-size:24px;padding:0 4px 6px}#title small{font-size:19px;font-weight:400;display:block}
+#title small{color:#cfe0e8}
+#hint{color:var(--teal);font-size:21px;padding:0 4px 8px}
+#wrap{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:12px;align-items:start}@media(max-width:1150px){#wrap{grid-template-columns:1fr}}#cv{position:relative}
+#side{background:#0f181d;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:21px}#side h4{margin:0 0 8px;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#side .grp{margin-bottom:14px}.it{display:block;width:100%;text-align:left;background:#142027;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:0 0 6px;color:var(--text)}
+.it b{display:block}.it small{color:#aebdc6;font-size:19px}.it b{font-size:23px}.it.w{border-color:#7a5a12;background:#2a2008}.it.w b{color:var(--amber)}.it .e{float:right;color:var(--muted);font-family:ui-monospace,monospace;font-size:15px}
+.none{color:#aebdc6;font-size:20px}.more{color:var(--amber);cursor:pointer;font-size:20px;text-decoration:underline}
+canvas{display:block;margin:0 auto;max-width:100%;max-height:calc(100vh - 220px);width:auto;height:auto;border-radius:8px;background:#0b1013}
+#rail{display:flex;flex-direction:column;gap:12px}#card{display:none;position:relative;background:#101a20;border:1px solid #35505c;border-radius:10px;padding:12px 14px}
+#card h3{margin:0;font-size:28px}#card .s{color:var(--muted);font-size:19px;margin-bottom:6px}
+#card .st{display:inline-block;font-size:16px;font-weight:700;padding:1px 9px;border-radius:99px;margin:2px 0 8px}
+.st.working{background:#10321f;color:#4ade80}.st.waiting{background:#3a2a08;color:var(--amber)}.st.idle,.st.asleep{background:#222d34;color:var(--muted)}
+#card p{margin:8px 0;font-size:21px;line-height:1.3}#card .q{font-style:italic;color:#cfe0e8}#card a{color:var(--teal);text-decoration:underline;text-underline-offset:3px;font-style:normal}#card a:hover{color:#8ff0dc}
+#card .j{font-family:ui-monospace,monospace;font-size:14px;color:var(--muted)}
+#card .x{position:absolute;right:10px;top:6px;border:none;background:none;font-size:18px;color:var(--muted)}
+#pal{display:none;max-width:1560px;margin:8px auto 0;background:#0f181d;border:1px solid #35505c;border-radius:10px;padding:6px 10px;max-height:240px;overflow:auto}#pal h5{margin:8px 0 2px;color:var(--muted);font-size:16px;font-weight:400}#pal button{padding:2px;margin:2px;background:#ffffff14;border:1px solid #35505c;border-radius:6px}#pal img{height:56px;display:block}#pal .tip{color:var(--muted);font-size:17px;padding:2px 0 4px}
+body.pub #bEdit,body.pub #bSave,body.pub #bBg,body.pub #bWait,body.pub #bClear,body.pub header h1 span,body.pub #demo{display:none!important}
+body.public #side,body.public #note{display:none}body.public #wrap{grid-template-columns:1fr}
+#pubfoot{display:none;max-width:1560px;margin:10px auto 24px;padding:0 6px;color:var(--muted);font-size:20px}body.public #pubfoot{display:block}#pubfoot a{color:var(--teal)}
+#note{font-size:18px;margin:8px auto 16px;max-width:1560px;padding:0 4px;color:var(--muted);font-size:12px}
+</style></head><body>
+<header><h1>The Offices</h1>
+<span class="pill off" id="mode">NO LIVE SIGNAL</span><span class="pill demo" id="demo" style="display:none">DEMO DATA</span><span class="sp"></span>
+<label style="color:var(--muted)">Light <select id="light"><option value="auto">auto (your clock)</option><option value="day">day</option><option value="night">night</option></select></label>
+<button id="bEdit">Edit seats</button><button id="bBg" style="display:none">Background: painted</button><button id="bSave" style="display:none">Save layout</button><button id="bRun">Run demo day</button><button id="bWait">Make Adam wait for images</button><button id="bClear">Clear</button></header>
+<nav id="tabs"><a data-r="lobby">Lobby <span class="b z">0</span></a><a data-r="rtc">Run the Clock <span class="b z">0</span></a><a data-r="dadview">Dad View <span class="b z">0</span></a></nav>
+<div id="stage"><div id="title"></div><div id="hint">👆 Click an agent to learn about them</div><div id="wrap"><div id="cv"><canvas id="c" width="1376" height="768"></canvas>
+</div><div id="rail"><aside id="side"></aside><div id="card"><button class="x" id="cx">×</button><h3 id="cn"></h3><div class="s" id="cs"></div><span class="st" id="cst"></span><p id="cw"></p><p class="q" id="cp"></p><p class="q" id="cx2"></p><div class="j" id="cj"></div></div></div></div></div>
+<div id="pal"></div>
+<div id="pubfoot">Two little offices that make YouTube videos: <a href="https://www.youtube.com/@RunTheClockShow" target="_blank" rel="noopener">Run the Clock</a> · <a href="https://www.youtube.com/@DadViewPresents" target="_blank" rel="noopener">Dad View Presents</a> · from the maker of <a href="https://analyzemyoffer.com" target="_blank" rel="noopener">analyzemyoffer.com</a> · <a href="privacy.html">Privacy</a><br><small style="font-size:16px">Headline font DPComic by <a href="http://www.zone38.net/" target="_blank" rel="noopener">codeman38</a> (zone38.net), used under its licence.</small></div>
+<div id="note">One office at a time: use the tabs, or click a door in the lobby. Everything on screen is driven by the runner's database; "Run demo day" queues harmless dummy jobs in a separate demo database. Door signs and names are drafts.</div>
+<script>window.PUBLIC=true;window.PUB_ROSTER=[{"id": "dot", "name": "Carol", "role": "Receptionist", "office": "lobby", "kind": "fixed", "persona": "Hi, I’m Carol. I greet you, take your request, and send it to the right office. I also keep a list of everything that needs the boss, so if it says ‘boss’ on it, I’ve been waiting a while. Please don’t bring me a Dad View problem and call it a Run the Clock problem. I can tell.", "work": "Greets you, takes requests, sends them to the right office, and keeps track of what needs the boss.", "scope": "", "extra": "Anyone walking out of the Dad View office with a resignation face gets a flyer for analyzemyoffer.com. Before you quit, find out what you’re actually worth."}, {"id": "rohan", "name": "Rohan", "role": "Director", "office": "run_the_clock", "kind": "fixed", "persona": "I plan every episode, hand out the work, and make the creative calls. My job is deciding what goes in the video. Everyone else’s job is telling me why that’s hard.", "work": "Plans each episode, hands out the work and makes the main creative calls.", "scope": "", "extra": ""}, {"id": "priya", "name": "Priya", "role": "Researcher", "office": "run_the_clock", "kind": "fixed", "persona": "I find the facts, check the sources, and flag anything disputed. If two sources disagree, I don’t pick a side. I put a sticky note on it and make it Rohan’s problem.", "work": "Finds the facts, checks the sources and flags what is disputed.", "scope": "", "extra": ""}, {"id": "julian", "name": "Julian", "role": "Writer", "office": "run_the_clock", "kind": "fixed", "persona": "I draft the script and keep polishing until it sounds like a person talking, not a Wikipedia page that learned to speak. If a sentence needs three commas to survive, it’s gone.", "work": "Drafts and polishes the script until it sounds like a person talking.", "scope": "", "extra": ""}, {"id": "meena", "name": "Meena", "role": "Visual Designer", "office": "run_the_clock", "kind": "fixed", "persona": "I build the animated scenes from code, with a new look every episode. Full automation, total creative freedom, and no one hand-draws anything. I once heard a rumor that another office does it manually. I assume it’s a joke.", "work": "Designs the pictures. Run the Clock builds scenes from code; Dad View matches hand-made images to scenes.", "scope": "", "extra": ""}, {"id": "theo", "name": "Theo", "role": "Editor", "office": "run_the_clock", "kind": "fixed", "persona": "I record the narration, sync the scenes to the voice, and assemble the video. If the lips, the words, and the animation all land on the same beat, nobody notices me. That’s the dream.", "work": "Records the narration, syncs the scenes to the voice and assembles the video.", "scope": "", "extra": ""}, {"id": "zara", "name": "Zara", "role": "Packaging and Analytics", "office": "run_the_clock", "kind": "fixed", "persona": "Thumbnails, titles, descriptions, and then the numbers after release. I design the click, then read the data to find out if anyone clicked. Sometimes the data is happy. Sometimes I need a minute.", "work": "Thumbnails, titles and descriptions, then reads the numbers after release.", "scope": "", "extra": ""}, {"id": "nyx", "name": "Nyx", "role": "Night-Shift Renderer", "office": "run_the_clock", "kind": "fixed", "persona": "I run the long renders after dark while the rest of you sleep. You’ll know I’m working when the render rack glows like a tiny, angry sunrise. Please don’t unplug me. I’m the only one here who works nights.", "work": "Runs the long renders, usually after dark, and the render rack glows.", "scope": "", "extra": ""}, {"id": "big_mike", "name": "Big Mike", "role": "Director", "office": "dad_view", "kind": "fixed", "persona": "I run Dad View. I set the direction and keep things safe, warm, and a little goofy. I’ve been a dad long enough to know the plan survives until the first snack request.", "work": "Plans each episode, hands out the work and makes the main creative calls.", "scope": "", "extra": ""}, {"id": "hannah", "name": "Hannah", "role": "Story Writer", "office": "dad_view", "kind": "fixed", "persona": "I turn a story into a script and a scene plan. Every story gets a beginning, a middle, and an end. The end usually arrives when someone yawns.", "work": "Turns a story into a script and a scene plan.", "scope": "", "extra": ""}, {"id": "adam", "name": "Adam", "role": "Visual Designer", "office": "dad_view", "kind": "fixed", "persona": "I’m the visual designer for Dad View. I plan every picture, write the prompts, and match the hand-made images to the scenes. By hand. Meanwhile, Meena over in Run the Clock gets full automation and does everything her own way. I’m not saying it’s unfair, but I’m updating my résumé. I hear analyzemyoffer.com can tell me if the offer is good. Fingers crossed for one with a render rack.", "work": "Designs the pictures. Run the Clock builds scenes from code; Dad View matches hand-made images to scenes.", "scope": "", "extra": ""}, {"id": "walter", "name": "Walter", "role": "Safety Checker", "office": "dad_view", "kind": "fixed", "persona": "I check the wording, the style, and the Made for Kids settings. I’m the reason nothing here says anything you’d mind your kid repeating at dinner. I read every line twice, and then once more out of spite.", "work": "Checks wording, style and the Made for Kids settings before anything moves on.", "scope": "", "extra": ""}, {"id": "sam", "name": "Sam", "role": "Editor", "office": "dad_view", "kind": "fixed", "persona": "I assemble the final video. My motto is that it’s never done, it’s just due. I cut the pauses, keep the giggles, and quietly remove the take where someone sneezed.", "work": "Records the narration, syncs the scenes to the voice and assembles the video.", "scope": "", "extra": ""}, {"id": "lila", "name": "Lila", "role": "Packaging and Analytics", "office": "dad_view", "kind": "fixed", "persona": "Thumbnails, titles, descriptions, then the post-release numbers. Parents click on warm, bright, and obvious. So that’s my whole personality now.", "work": "Thumbnails, titles and descriptions, then reads the numbers after release.", "scope": "", "extra": ""}, {"id": "noor", "name": "Noor", "role": "Neutrality Reviewer", "office": "run_the_clock", "kind": "intern", "persona": "I read the script and ask, ‘Would both sides be okay with this?’ I’m very popular at parties.", "work": "Reads a political script with the parties swapped.", "scope": "run_the_clock", "extra": ""}, {"id": "finn", "name": "Finn", "role": "Fact Checker", "office": "run_the_clock", "kind": "intern", "persona": "Priya finds the facts. I check that she found them correctly. We’re a very polite rivalry.", "work": "Checks every number against the research.", "scope": "run_the_clock", "extra": ""}, {"id": "bo", "name": "Bo", "role": "Scene Builder Helper", "office": "run_the_clock", "kind": "intern", "persona": "I help Meena build scenes. I mostly move rectangles. Some of them become important.", "work": "Builds an extra scene when there is a lot to do.", "scope": "run_the_clock", "extra": ""}, {"id": "kai", "name": "Kai", "role": "Footage Finder", "office": "run_the_clock", "kind": "intern", "persona": "I find the clip you need, which is somehow always the third page of search results.", "work": "Looks for short cutaway clips and checks them.", "scope": "run_the_clock", "extra": ""}, {"id": "gus", "name": "Gus", "role": "Preflight Inspector", "office": "both", "kind": "intern", "persona": "I check everything before takeoff. It’s not a glamorous job until it saves a launch.", "work": "Checks the video before it renders.", "scope": "both", "extra": ""}, {"id": "cleo", "name": "Cleo", "role": "Caption Checker", "office": "both", "kind": "intern", "persona": "I make sure the captions say what the narrator said, not what a robot heard.", "work": "Checks the captions line up with the voice.", "scope": "both", "extra": ""}, {"id": "remy", "name": "Remy", "role": "Thumbnail Variant Maker", "office": "both", "kind": "intern", "persona": "Give me one thumbnail and I’ll give you six. One of them will have a bigger arrow.", "work": "Makes the extra thumbnails for testing.", "scope": "both", "extra": ""}, {"id": "pip", "name": "Pip", "role": "Image Matcher", "office": "dad_view", "kind": "intern", "persona": "Adam hands me the hand-made images and I match them to the scenes. I’m the manual step inside the manual step. The joke has a sub-joke.", "work": "Matches the uploaded images to the right scenes.", "scope": "dad_view", "extra": ""}];window.PUB_LAYOUT={"lobby": {"desks": {"dot": {"x": 874, "y": 513, "pose": "sit", "flip": true, "rot": 0, "z": 0}}, "guest": [], "way": [[1130, 450], [820, 310], [723, 649], [557, 320], [262, 447]], "clocks": [{"x": 1085, "y": 227, "d": 70}], "bg": "shell", "items": [{"k": "furniture_lobby_0", "x": 885, "y": 533, "s": 0.4237585709137922, "flip": true}, {"k": "furniture_lobby_1", "x": 696, "y": 287, "flip": false}, {"k": "furniture_lobby_2", "x": 504, "y": 568, "flip": true}, {"k": "furniture_lobby_3", "x": 421, "y": 593, "flip": false}, {"k": "furniture_lobby_4", "x": 672, "y": 668, "flip": false}, {"k": "furniture_lobby_5", "x": 473, "y": 379, "s": 0.487965560931792, "flip": true}, {"k": "decor_appliances_8", "x": 608, "y": 325, "s": 0.4786905600000001, "flip": true}, {"k": "decor_appliances_0", "x": 582, "y": 327, "s": 0.32163200000000003, "flip": false, "e": 50}, {"k": "decor_plants_0", "x": 768, "y": 297, "flip": false}, {"k": "decor_plants_1", "x": 165, "y": 488, "s": 0.6030122427187202, "flip": false}, {"k": "decor_wall_right_6", "x": 766, "y": 188, "flip": false}, {"k": "decor_plants_5", "x": 596, "y": 642, "s": 0.7596217582996846, "flip": false}, {"k": "decor_plants_6", "x": 262, "y": 472, "flip": true}, {"k": "decor_plants_6", "x": 811, "y": 341, "flip": false}, {"k": "display", "x": 543, "y": 177, "s": 0.4665600000000001, "flip": false, "display": 1, "face": 0, "w": "L", "d": 139.96800000000005}, {"k": "decor_wall_left_6", "x": 320, "y": 303, "flip": false}]}, "rtc": {"desks": {"rohan": {"x": 676, "y": 416, "pose": "sit", "flip": true, "rot": 0, "z": 0}, "priya": {"x": 519, "y": 449, "pose": "sit", "flip": false, "rot": 0, "z": 0}, "meena": {"x": 821, "y": 479, "pose": "sit", "flip": false, "rot": 0, "z": 0}, "theo": {"x": 675, "y": 507, "pose": "sit", "flip": false, "rot": 0, "z": 0}, "julian": {"x": 981, "y": 559, "pose": "sit", "flip": false, "rot": 0, "z": 0}, "zara": {"x": 782, "y": 614, "pose": "stand", "flip": false, "rot": 0, "z": 0}, "nyx": {"x": 547, "y": 352, "pose": "stand", "flip": false, "rot": 0, "z": 0}}, "guest": [{"x": 245, "y": 478}, {"x": 342, "y": 520}, {"x": 445, "y": 567}, {"x": 543, "y": 611}, {"x": 788.993, "y": 609.7280000000001}, {"x": 855.693, "y": 601.1719999999999}, {"x": 922.3929999999999, "y": 592.616}], "way": [[688.4599999999999, 437.09000000000003], [523, 359], [688.713, 534.2420000000001], [855.4399999999998, 504.0199999999999], [428, 488], [894.5745, 585.877], [410.73500000000007, 546.34]], "clocks": [{"x": 160, "y": 337, "d": 70}], "bg": "shell", "items": [{"k": "furniture_rtc_2", "x": 685, "y": 393, "flip": false}, {"k": "furniture_rtc_0", "x": 533, "y": 454, "flip": false}, {"k": "furniture_rtc_0", "x": 831, "y": 487, "flip": false}, {"k": "furniture_rtc_0", "x": 689, "y": 517, "flip": false}, {"k": "furniture_rtc_0", "x": 1004, "y": 562, "flip": false}, {"k": "furniture_rtc_5", "x": 815, "y": 591, "flip": true}, {"k": "furniture_rtc_3", "x": 266, "y": 488, "flip": false}, {"k": "furniture_rtc_3", "x": 366, "y": 528, "flip": false}, {"k": "furniture_rtc_3", "x": 464, "y": 588, "flip": false}, {"k": "furniture_rtc_3", "x": 570, "y": 637, "flip": false}, {"k": "furniture_rtc_6", "x": 1123, "y": 475, "flip": false}, {"k": "decor_appliances_12", "x": 605, "y": 315, "flip": false}, {"k": "decor_appliances_5", "x": 433, "y": 379, "flip": false}, {"k": "decor_appliances_4", "x": 355, "y": 409, "flip": false}, {"k": "decor_appliances_11", "x": 299, "y": 431, "flip": false}, {"k": "decor_appliances_8", "x": 745, "y": 303, "flip": false}, {"k": "decor_appliances_8", "x": 809, "y": 334, "flip": false}, {"k": "decor_appliances_0", "x": 750, "y": 311, "flip": true, "e": 50}, {"k": "decor_appliances_1", "x": 820, "y": 342, "flip": false, "e": 50}, {"k": "decor_appliances_2", "x": 966, "y": 390, "flip": false}, {"k": "decor_appliances_3", "x": 1061, "y": 427, "flip": false}, {"k": "decor_plants_0", "x": 684, "y": 253, "flip": false}, {"k": "decor_plants_1", "x": 704, "y": 706, "s": 0.5169858048000001, "flip": false}, {"k": "decor_plants_3", "x": 856, "y": 619, "flip": false}, {"k": "decor_wall_right_3", "x": 799, "y": 144, "flip": false}, {"k": "decor_wall_right_4", "x": 900, "y": 184, "flip": false}, {"k": "decor_wall_left_1", "x": 331, "y": 294, "flip": false}, {"k": "display", "x": 1066, "y": 267, "s": 0.2865571840000001, "flip": false, "display": 1, "face": 0, "w": "R", "d": 107.45894400000002}, {"k": "decor_glass_0", "x": 396, "y": 499, "s": 0.21198170846986247, "flip": true}, {"k": "decor_glass_0", "x": 490, "y": 556, "s": 0.23041490051072006, "flip": true}, {"k": "decor_glass_0", "x": 597, "y": 606, "s": 0.23041490051072006, "flip": true}, {"k": "decor_glass_0", "x": 560, "y": 425, "s": 0.21198170846986247, "flip": true}, {"k": "decor_glass_0", "x": 709, "y": 489, "s": 0.23041490051072006, "flip": true}, {"k": "decor_glass_0", "x": 960, "y": 568, "s": 0.25045097881600004, "flip": true}]}, "dadview": {"desks": {"big_mike": {"x": 629, "y": 384, "pose": "sit", "flip": true, "rot": 0, "z": 0}, "hannah": {"x": 525, "y": 447, "pose": "sit", "flip": false, "rot": 0, "z": 0}, "adam": {"x": 813, "y": 463, "pose": "sit", "flip": false, "rot": 0, "z": 0}, "sam": {"x": 677, "y": 516, "pose": "sit", "flip": false, "rot": 0, "z": 0}, "walter": {"x": 946, "y": 522, "pose": "sit", "flip": false, "rot": 0, "z": 0}, "lila": {"x": 823, "y": 624, "pose": "stand", "flip": false, "rot": 0, "z": 0}}, "guest": [{"x": 548, "y": 601}, {"x": 368, "y": 518}, {"x": 474, "y": 560}, {"x": 648, "y": 649}, {"x": 788.993, "y": 609.7280000000001}, {"x": 855.693, "y": 601.1719999999999}], "way": [[688.4599999999999, 437.09000000000003], [521.4799999999999, 370.15999999999997], [708, 581], [297, 475], [438.39250000000004, 491.255], [894.5745, 585.877]], "clocks": [{"x": 518, "y": 204, "d": 70}], "bg": "shell", "items": [{"k": "furniture_dadview_2", "x": 644, "y": 343, "s": 0.5441955840000002, "flip": false}, {"k": "furniture_dadview_0", "x": 533, "y": 454, "flip": false}, {"k": "furniture_dadview_0", "x": 825, "y": 470, "flip": false}, {"k": "furniture_dadview_0", "x": 689, "y": 517, "flip": false}, {"k": "furniture_dadview_0", "x": 964, "y": 539, "flip": false}, {"k": "furniture_dadview_5", "x": 854, "y": 599, "s": 0.4665600000000001, "flip": true}, {"k": "furniture_dadview_3", "x": 662, "y": 660, "flip": false}, {"k": "furniture_dadview_3", "x": 366, "y": 528, "flip": false}, {"k": "furniture_dadview_3", "x": 466, "y": 569, "flip": false}, {"k": "furniture_dadview_3", "x": 567, "y": 609, "flip": false}, {"k": "furniture_dadview_6", "x": 1049, "y": 441, "flip": false}, {"k": "decor_plants_12", "x": 478, "y": 351, "flip": false}, {"k": "decor_plants_13", "x": 326, "y": 430, "flip": true}, {"k": "decor_appliances_4", "x": 409, "y": 416, "flip": false}, {"k": "decor_appliances_8", "x": 750, "y": 303, "flip": false}, {"k": "decor_appliances_8", "x": 811, "y": 340, "flip": false}, {"k": "decor_appliances_0", "x": 753, "y": 308, "flip": true, "e": 50}, {"k": "decor_appliances_1", "x": 822, "y": 346, "flip": false, "e": 50}, {"k": "decor_appliances_2", "x": 894, "y": 370, "flip": true}, {"k": "decor_appliances_3", "x": 1199, "y": 438, "flip": false}, {"k": "decor_plants_0", "x": 694, "y": 289, "flip": false}, {"k": "decor_plants_1", "x": 706, "y": 702, "flip": false}, {"k": "decor_wall_right_3", "x": 799, "y": 144, "flip": false}, {"k": "decor_wall_right_5", "x": 900, "y": 196, "flip": false}, {"k": "decor_wall_left_5", "x": 626, "y": 170, "flip": false}, {"k": "decor_plants_0", "x": 177, "y": 488, "flip": false}, {"k": "display", "x": 1078, "y": 268, "s": 0.31147520000000006, "flip": false, "display": 1, "face": 1, "w": "R", "d": 116.80320000000002}, {"k": "decor_wall_left_6", "x": 314, "y": 312, "s": 0.5038848000000001, "flip": false}]}};</script>
+<script>
+const PUBLIC=!!window.PUBLIC,B2=PUBLIC?'art2/':B2,B3=PUBLIC?'art/':B3;
+if(PUBLIC||!/[?&]admin/.test(location.search))document.body.classList.add('pub');if(PUBLIC)document.body.classList.add('public');
+const FW=1376,FH=768,C=document.getElementById('c'),X=C.getContext('2d');
+const TITLES={lobby:['Reception','Where requests arrive and get sent to the right office'],rtc:['Run the Clock: Automation Wing','Animated documentaries, built from code'],dadview:['Dad View: Handcrafted with Love and Mild Resentment','Bedtime stories, made by hand']};
+// ---- rooms are built from sprites: a bare shell + floor/wall objects, depth-sorted with the people ----
+const K_C=0.26,K_F=0.40,K_D=0.38,K_W=0.40;                 // sprite scales: characters, furniture, decor, wall items
+const GEO={rtc:{B:[687,277],L:[266,488],R:[1108,486]},dadview:{B:[688,305],L:[333,490],R:[1045,492]},lobby:{B:[688,315],L:[293,507],R:[1085,507]}};
+const SHS=1.15,RSR={lobby:1,rtc:1,dadview:1},PV=[688,395];        // room scale and its pivot
+const rsc=(r,x,y)=>[PV[0]+(x-PV[0])*RSR[r],PV[1]+(y-PV[1])*RSR[r]];
+// floor point from fractions (u runs along the back-left wall towards the left corner, v along the back-right wall towards the right corner)
+const fp=(r,u,v)=>{const g=GEO[r];return rsc(r,g.B[0]+u*(g.L[0]-g.B[0])+v*(g.R[0]-g.B[0]),g.B[1]+u*(g.L[1]-g.B[1])+v*(g.R[1]-g.B[1]))};
+const wp=(r,w,t)=>w==='L'?fp(r,t,0):fp(r,0,t);              // point on the base of the left (L) or right (R) wall
+const LAY={
+ lobby:{img:'room_lobby',art2:true,px:true,pk:.30,chair:'chair_guest',entry:[790,320],
+  seats:{dot:{x:735,y:352,pose:'sit'}},guest:[],
+  way:[[620,500],[800,520],[900,500],[520,520],[1000,470],[420,480]],
+  objs:[],
+  wall:[{hit:true,go:'rtc',box:[730,115,95,180]},{hit:true,go:'dadview',box:[905,195,90,200]},{clock:1,w:'R',x:1040,y:310,d:66,face:2,px:true}]},
+ rtc:{img:'room_office_rtc',art2:true,px:true,pk:.30,chair:'chair_rtc',entry:[250,470],rackPos:[165,340],
+  seats:{rohan:{x:330,y:372,pose:'sit'},priya:{x:440,y:505,pose:'sit'},julian:{x:505,y:578,pose:'sit'},meena:{x:700,y:460,pose:'sit'},
+         theo:{x:650,y:405,pose:'sit'},zara:{x:1085,y:495,pose:'stand'},nyx:{x:205,y:440,pose:'stand'}},
+  guest:[{x:715,y:655},{x:800,y:615},{x:880,y:580},{x:960,y:545},{x:560,y:300},{x:640,y:290},{x:1000,y:430}],
+  way:[[960,315],[1210,430],[640,300],[1000,430],[1130,405],[330,470],[840,300]],
+  objs:[],wall:[{clock:1,w:'R',x:790,y:182,d:60,face:0,px:true}]},
+ dadview:{img:'room_office_dadview',art2:true,px:true,pk:.30,chair:'chair_dadview',entry:[450,595],
+  seats:{big_mike:{x:322,y:400,pose:'sit'},hannah:{x:560,y:345,pose:'sit'},adam:{x:690,y:425,pose:'sit'},walter:{x:650,y:295,pose:'stand'},
+         sam:{x:850,y:545,pose:'sit'},lila:{x:470,y:355,pose:'stand'}},
+  guest:[{x:565,y:615},{x:690,y:665},{x:760,y:560},{x:1000,y:470}],
+  way:[[890,315],[575,325],[1000,475],[600,490],[420,470],[800,330]],
+  objs:[],wall:[{clock:1,w:'L',x:352,y:306,d:50,face:1,px:true}]}
+};
+const ROOMS={};
+// starter layout for the bare shells (floor corners read off the pictures); everything is editable and saved in layout.json
+const GEON={B:[688,278],L:[205,468],R:[1172,472]};
+const spt=(x,y)=>[PV[0]+(x-PV[0])*SHS,PV[1]+(y-PV[1])*SHS];
+const fpN=(u,v)=>spt(GEON.B[0]+u*(GEON.L[0]-GEON.B[0])+v*(GEON.R[0]-GEON.B[0]),GEON.B[1]+u*(GEON.L[1]-GEON.B[1])+v*(GEON.R[1]-GEON.B[1]));
+const UVD={
+ rtc:{entry:[.12,.60],seats:{rohan:[.23,.23,'sit'],priya:[.51,.23,'sit'],meena:[.23,.51,'sit'],theo:[.51,.51,'sit'],julian:[.23,.77,'sit'],zara:[.50,.80,'stand'],nyx:[.22,.14,'stand']},
+  guest:[[.83,.14],[.83,.32],[.83,.50],[.83,.68],[.70,.88],[.62,.92],[.54,.96]],way:[[.40,.40],[.40,.10],[.62,.62],[.40,.70],[.75,.30],[.55,.92],[.90,.40]]},
+ dadview:{entry:[.12,.60],seats:{big_mike:[.23,.23,'sit'],hannah:[.51,.23,'sit'],adam:[.23,.51,'sit'],sam:[.51,.51,'sit'],walter:[.23,.77,'sit'],lila:[.50,.80,'stand']},
+  guest:[[.83,.14],[.83,.32],[.83,.50],[.83,.68],[.70,.88],[.62,.92]],way:[[.40,.40],[.40,.10],[.62,.62],[.40,.70],[.75,.30],[.55,.92]]},
+ lobby:{entry:[.30,.55],seats:{dot:[.48,.38,'sit']},guest:[],way:[[.30,.55],[.65,.40],[.70,.75],[.40,.80],[.55,.30]]}};
+// starter furniture: [sprite, u, v, extra]   wall items: [sprite, 'L'|'R', t, height above floor]
+const ST={
+ rtc:{f:[['furniture_rtc_2',.30,.30],['furniture_rtc_0',.58,.30],['furniture_rtc_0',.30,.58],['furniture_rtc_0',.58,.58],['furniture_rtc_0',.30,.84],['furniture_rtc_5',.58,.84],
+        ['furniture_rtc_3',.90,.14],['furniture_rtc_3',.90,.32],['furniture_rtc_3',.90,.50],['furniture_rtc_3',.90,.68],['furniture_rtc_6',.16,.84],['furniture_rtc_8',.72,.74],
+        ['decor_appliances_12',.20,.05],['decor_appliances_5',.50,.04],['decor_appliances_4',.64,.04],['decor_appliances_11',.74,.04],
+        ['decor_appliances_8',.04,.18],['decor_appliances_8',.04,.30],['decor_appliances_8',.04,.42],['decor_appliances_0',.04,.18,{e:50}],['decor_appliances_1',.04,.30,{e:50}],
+        ['decor_appliances_2',.04,.54],['decor_appliances_3',.05,.96],['decor_plants_0',.06,.07],['decor_plants_1',.97,.95],['decor_plants_3',.66,.96],['decor_plants_6',.62,.66]],
+     w:[['decor_wall_right_3','R',.20,140],['decor_wall_right_4','R',.38,140],['decor_wall_right_6','R',.52,150],['decor_wall_left_1','L',.62,130]]},
+ dadview:{f:[['furniture_dadview_2',.30,.30],['furniture_dadview_0',.58,.30],['furniture_dadview_0',.30,.58],['furniture_dadview_0',.58,.58],['furniture_dadview_0',.30,.84],['furniture_dadview_5',.58,.84],
+        ['furniture_dadview_3',.90,.14],['furniture_dadview_3',.90,.32],['furniture_dadview_3',.90,.50],['furniture_dadview_3',.90,.68],['furniture_dadview_6',.16,.84],['furniture_dadview_8',.72,.74],
+        ['decor_plants_12',.50,.04],['decor_plants_13',.64,.04],['decor_appliances_4',.76,.04],
+        ['decor_appliances_8',.04,.18],['decor_appliances_8',.04,.30],['decor_appliances_8',.04,.42],['decor_appliances_0',.04,.18,{e:50}],['decor_appliances_1',.04,.30,{e:50}],
+        ['decor_appliances_2',.04,.54],['decor_appliances_3',.05,.96],['decor_plants_5',.62,.64],['decor_plants_0',.06,.07],['decor_plants_1',.97,.95]],
+     w:[['decor_wall_right_3','R',.20,140],['decor_wall_right_5','R',.38,130],['decor_wall_right_6','R',.52,150],['decor_wall_left_5','L',.62,130]]},
+ lobby:{f:[['furniture_lobby_0',.52,.44],['furniture_lobby_1',.10,.10],['furniture_lobby_2',.30,.80],['furniture_lobby_3',.45,.84],['furniture_lobby_4',.85,.52],['furniture_lobby_5',.78,.28],
+        ['decor_appliances_8',.04,.34],['decor_appliances_0',.04,.34,{e:50}],['decor_plants_0',.06,.20],['decor_plants_1',.97,.95],['decor_plants_6',.55,.66]],
+     w:[['decor_wall_right_6','R',.52,150]]}};
+function shellDefaults(r,R){
+  const D=UVD[r];if(!D)return;R.bg='shell';R.entry=fpN(...D.entry);R.desks={};
+  for(const [id,d] of Object.entries(D.seats)){const [x,y]=fpN(d[0],d[1]);R.desks[id]={x,y,pose:d[2],flip:false}}
+  R.guest=D.guest.map(g=>{const [x,y]=fpN(g[0],g[1]);return {x,y}});R.way=D.way.map(w=>fpN(w[0],w[1]));
+  const wallPt=(side,t,h)=>{const [x,y]=side==='L'?fpN(t,0):fpN(0,t);return [x,y-h*SHS]};
+  if(r==='lobby'){const m=(x0,y0,x1,y1)=>{const a=spt(x0,y0),b=spt(x1,y1);return [a[0],a[1],b[0]-a[0],b[1]-a[1]]};
+    R.wall=[{hit:true,go:'rtc',box:m(255,248,340,418)},{hit:true,go:'dadview',box:m(788,148,868,320)},{clock:1,w:'R',x:wallPt('R',.50,230)[0],y:wallPt('R',.50,230)[1],d:70,face:2,px:true}]}
+  else{const c=wallPt('L',.45,230);R.wall=[{clock:1,w:'L',x:c[0],y:c[1],d:70,face:r==='rtc'?0:1,px:true}]}
+  const T=ST[r];R.objs=[];const tv=(side,t,h,face,d)=>{const [x,y]=wallPt(side,t,h);R.objs.push({display:1,k:'display',face,w:side,x:Math.round(x),y:Math.round(y),d})};
+  if(r==='rtc')tv('R',.72,125,0,140);if(r==='dadview')tv('R',.72,125,1,140);if(r==='lobby')tv('L',.30,130,0,120);
+  if(T){
+    for(const f of T.f){const [x,y]=fpN(f[1],f[2]);R.objs.push({k:f[0],x:Math.round(x),y:Math.round(y),...(f[3]||{})})}
+    for(const w of T.w){const [x,y]=wallPt(w[1],w[2],w[3]);R.objs.push({k:w[0],x:Math.round(x),y:Math.round(y)})}}
+}
+function bakeRooms(){
+  for(const r of Object.keys(LAY)){const L=LAY[r],R={img:L.img,chair:L.chair,desks:{},guest:[],way:[],objs:[],wall:[],art2:!!L.art2,pk:L.pk};
+    if(L.px){R.entry=L.entry.slice();for(const [id,d] of Object.entries(L.seats))R.desks[id]={x:d.x,y:d.y,pose:d.pose,flip:!!d.flip};R.way=L.way.map(w=>w.slice());R.wall=L.wall.map(o=>({...o}));R.guest=(L.guest||[]).map(g=>({x:g.x,y:g.y,h:g.h}));R.rackPos=L.rackPos;shellDefaults(r,R);ROOMS[r]=R;continue}
+    R.entry=fp(r,...L.entry);
+    for(const [id,d] of Object.entries(L.seats)){const [x,y]=fp(r,d.u,d.v);R.desks[id]={x,y,pose:d.pose,flip:!!d.flip}}
+    for(const g of L.guest){const [x,y]=fp(r,g.u,g.v);R.guest.push({x,y,h:g.h})}
+    for(const w of L.way)R.way.push(fp(r,w[0],w[1]));
+    for(const o of L.objs){const [x,y]=fp(r,o.u,o.v);R.objs.push({...o,x,y})}
+    for(const o of L.wall){const [x,y]=wp(r,o.w,o.t);R.wall.push({...o,x,y:y-(o.h||0)*RSR[r]})}
+    ROOMS[r]=R}
+}
+bakeRooms();
+const ROOM_OF={run_the_clock:'rtc',dad_view:'dadview',lobby:'lobby','':'lobby'};
+const IDS=['dot','rohan','priya','julian','meena','theo','zara','nyx','big_mike','hannah','adam','walter','sam','lila','noor','finn','bo','kai','gus','cleo','remy','pip'];
+const img={},fr={},props=[],spr={},CROP={};let manifest={};
+const CR=r=>CROP[ROOMS[r].bg==='shell'?r+'_S':r];
+function load(src){return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
+const SHEETS={furniture_rtc:9,furniture_dadview:9,furniture_lobby:6,chair_rtc:4,chair_dadview:4,chair_guest:4,decor_appliances:14,decor_plants:14,
+  decor_wall_left:12,decor_wall_right:12,decor_glass:5,clocks:12,displays:2};
+async function loadAll(){
+  try{await Promise.race([Promise.all([document.fonts.load('600 12px Fredoka'),document.fonts.load('700 13px Fredoka')]),new Promise(r=>setTimeout(r,2500))])}catch(e){}
+  manifest=await (await fetch(B2+'manifest.json')).json();
+  const jobs=[];
+  for(const k of Object.keys(ROOMS)){const pre=ROOMS[k].art2?B2:B3;if(!(PUBLIC&&ROOMS[k].art2)){jobs.push(load(pre+ROOMS[k].img+'.png').then(i=>img[k]=i));jobs.push(load(pre+ROOMS[k].img+'_night.png').then(i=>{if(i)img[k+'_nimg']=i}))}
+    jobs.push(load(B3+ROOMS[k].img+'.png').then(i=>img[k+'_S']=i));jobs.push(load(B3+ROOMS[k].img+'_night.png').then(i=>{if(i)img[k+'_Sn']=i}))}
+  for(const [sh,n] of Object.entries(SHEETS))for(let k=0;k<n;k++)jobs.push(load(`${B3}${sh}_${k}.png`).then(i=>spr[sh+'_'+k]=i));
+  for(const id of IDS){fr[id]=[];for(let k=0;k<6;k++)jobs.push(load(`${B2}${id.replace('_','')}_${k}.png`).then(i=>fr[id][k]=i))}
+  for(let k=0;k<15;k++)jobs.push(load(`${B2}prop_${k}.png`).then(i=>props[k]=i));
+  await Promise.all(jobs);
+  const cropOf=(im,sc)=>{const o=document.createElement('canvas');o.width=FW;o.height=FH;const c=o.getContext('2d');c.drawImage(im,0,0);const d=c.getImageData(0,0,FW,FH).data;let x0=FW,y0=FH,x1=0,y1=0;
+    for(let y=0;y<FH;y+=2)for(let x=0;x<FW;x+=2){if(d[(y*FW+x)*4+3]>30){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}}
+    const m=(x,y)=>[PV[0]+(x-PV[0])*sc,PV[1]+(y-PV[1])*sc],[ax,ay]=m(x0,y0),[bx,by]=m(x1,y1);return {x:Math.floor(ax-14),y:Math.floor(ay-14),w:Math.ceil(bx-ax+28),h:Math.ceil(by-ay+28)}};
+  for(const k of Object.keys(ROOMS))for(const key of [k,k+'_S']){const im=img[key];if(!im)continue;CROP[key]=cropOf(im,key===k?1:SHS);
+    const nimg=key===k?img[k+'_nimg']:img[k+'_Sn'];if(nimg){img[key+'_n']=nimg;continue}
+    const o=document.createElement('canvas');o.width=FW;o.height=FH;const c=o.getContext('2d');c.drawImage(im,0,0);c.globalCompositeOperation='source-atop';c.fillStyle='rgba(14,24,70,.66)';c.fillRect(0,0,FW,FH);img[key+'_n']=o}
+}
+// ---- state ----
+let room=(location.hash||'#lobby').slice(1);if(!ROOMS[room])room='lobby';
+let S={agents:[],live:false,demo:false,local_hour:12},night=false,sel=null;
+const A={};   // simulated agents by id
+const rnd=(a,b)=>a+Math.random()*(b-a);
+function roomOf(a){return a.kind==='intern'?ROOM_OF[a.at]||'rtc':(ROOM_OF[a.office]||'lobby')}
+function takeSeat(rm,id){const used=new Set(Object.values(A).filter(o=>o.room===rm&&o.seat!=null&&o.seat>=0&&o.id!==id).map(o=>o.seat));
+  const g=ROOMS[rm].guest;for(let i=0;i<g.length;i++)if(!used.has(i))return i;return -1}
+function sync(data){
+  S=data;const seen=new Set();
+  for(const d of data.agents){seen.add(d.id);let a=A[d.id];const rm=roomOf(d);
+    if(!a){const home=d.kind==='intern'?null:ROOMS[rm].desks[d.id];const e=ROOMS[rm].entry;
+      a={id:d.id,room:rm,homeRoom:rm,x:home?home.x:e[0],y:home?home.y:e[1],path:[],mode:'sit',t:0,wait:rnd(4,14),leaving:false,fi:0,seat:null,bob:rnd(0,6)};A[d.id]=a}
+    Object.assign(a,{d,leaving:false,state:d.state});
+    if(a.d.kind==='intern'&&a.seat==null){a.room=rm;a.seat=takeSeat(rm,a.id);const e=ROOMS[rm].entry;if(a.x===undefined){a.x=e[0];a.y=e[1]}
+      const g=ROOMS[rm].guest[a.seat>=0?a.seat:0];a.path=[[g.x,g.y]]}
+  }
+  for(const id of Object.keys(A)){if(!seen.has(id)){const a=A[id];if(a.d&&a.d.kind==='intern'&&!a.leaving){a.leaving=true;a.seat=null;a.path=[ROOMS[a.room].entry.slice()]}}}
+}
+function home(a){if(a.d.kind==='intern'){const g=ROOMS[a.room].guest;const p=g[(a.seat!=null&&a.seat>=0)?a.seat:0]||{x:a.x,y:a.y};return {x:p.x,y:p.y,pose:'sit'}}return ROOMS[a.room].desks[a.id]||{x:600,y:500,pose:'stand'}}
+// ---- visits: now and then somebody walks to the lobby to talk to Carol, or over to the other office ----
+const EXIT={rtc:[250,470],dadview:[450,595]},DOORL={rtc:[790,318],dadview:[960,408]},TALK=[615,440];
+let visitT=14;
+function visit(dt){
+  visitT-=dt;if(visitT>0||night)return;visitT=rnd(22,48);
+  const c=Object.values(A).filter(a=>a.d&&a.d.kind==='fixed'&&a.id!=='dot'&&a.state==='idle'&&!a.trip&&!a.path.length&&a.room===a.homeRoom&&EXIT[a.homeRoom]);
+  if(!c.length)return;const a=c[Math.floor(Math.random()*c.length)],h=a.homeRoom,seat=ROOMS[h].desks[a.id];if(!seat)return;
+  const steps=[{goto:EXIT[h]},{room:'lobby',at:DOORL[h]}];
+  if(Math.random()<.65||!A.dot){steps.push({goto:TALK},{linger:5.5,chatWith:'dot'},{goto:DOORL[h]})}
+  else{const o=h==='rtc'?'dadview':'rtc',pp=Object.values(A).filter(x=>x.d&&x.d.kind==='fixed'&&x.homeRoom===o&&x.room===o);if(!pp.length)return;
+    const p=pp[Math.floor(Math.random()*pp.length)];
+    steps.push({goto:DOORL[o]},{room:o,at:EXIT[o]},{gotoAgent:p.id},{linger:5.5,chatWith:p.id},{goto:EXIT[o]},{room:'lobby',at:DOORL[o]},{goto:DOORL[h]})}
+  steps.push({room:h,at:EXIT[h]},{goto:[seat.x,seat.y]});a.trip={steps,i:0};
+}
+function tripStep(a){
+  const tr=a.trip,st=tr.steps[tr.i++],T=performance.now()/1000;if(!st){a.trip=null;return}
+  if(st.goto)a.path=[st.goto.slice()];
+  else if(st.gotoAgent){const o=A[st.gotoAgent];if(o)a.path=[[o.x+42,o.y+10]]}
+  else if(st.room){a.room=st.room;a.x=st.at[0];a.y=st.at[1]}
+  else if(st.linger){a.hold=T+st.linger;a.chat=[T,T+2.4];const o=A[st.chatWith];if(o)o.chat=[T+1.2,T+3.8]}
+}
+function tripAbort(a){a.trip=null;a.hold=0;a.path=[];a.room=a.homeRoom;const h=ROOMS[a.room].desks[a.id];if(h){a.x=h.x;a.y=h.y}}
+let chatT=3;
+function chat(dt){
+  chatT-=dt;if(chatT>0)return;chatT=rnd(3.5,7.5);const T=performance.now()/1000;
+  const ppl=Object.values(A).filter(a=>a.room===room&&a.d&&!a.leaving),pairs=[];
+  for(let i=0;i<ppl.length;i++)for(let j=i+1;j<ppl.length;j++){if(Math.hypot(ppl[i].x-ppl[j].x,ppl[i].y-ppl[j].y)<150)pairs.push([ppl[i],ppl[j]])}
+  if(!pairs.length)return;const [a,b]=pairs[Math.floor(Math.random()*pairs.length)],first=Math.random()<.5?[a,b]:[b,a];
+  first[0].chat=[T,T+2.6];first[1].chat=[T+1.1,T+3.7];
+}
+function update(dt){chat(dt);visit(dt);
+  for(const id of Object.keys(A)){const a=A[id];if(!a.d)continue;a.t+=dt;
+    const h=home(a),working=a.state==='working',waiting=a.state==='waiting',T=performance.now()/1000;
+    if(a.trip&&(working||waiting)){tripAbort(a);continue}
+    if(a.hold&&T<a.hold){a.mode='stand';continue}
+    if(a.trip&&!a.path.length)tripStep(a);
+    if(a.path.length){const [tx,ty]=a.path[0],dx=tx-a.x,dy=ty-a.y,dist=Math.hypot(dx,dy),step=85*dt;a.face=dx<0;
+      if(dist<=step){a.x=tx;a.y=ty;a.path.shift();if(!a.path.length&&a.leaving){delete A[id];continue}}else{a.x+=dx/dist*step;a.y+=dy/dist*step}
+      a.mode='walk';a.fi=Math.floor(a.t/0.22)%2;continue}
+    if(a.trip){a.mode='stand';continue}
+    const atHome=Math.hypot(a.x-h.x,a.y-h.y)<3;
+    if(!atHome&&(working||waiting||(night&&a.d.kind==='fixed'))){a.path=[[h.x,h.y]];continue}
+    if(atHome){a.mode=h.pose==='stand'?'stand':'sit';a.linger=0;
+      if(a.state==='idle'&&!night&&a.d.kind==='fixed'){a.wait-=dt;if(a.wait<=0){const w=ROOMS[a.room].way;const p=w[Math.floor(Math.random()*w.length)];a.path=[[p[0],p[1]]];a.wait=rnd(7,16)}}}
+    else{a.mode='stand';a.linger=(a.linger||0)+dt;if(a.linger>a.wait&&a.state==='idle'){a.path=[[h.x,h.y]];a.linger=0;a.wait=rnd(10,26)}}
+  }
+}
+function frameFor(a){
+  if(a.mode==='walk')return 4+a.fi;
+  if(night&&a.state==='idle'&&a.d.kind==='fixed'&&!a.trip&&!a.path.length&&Math.hypot(a.x-home(a).x,a.y-home(a).y)<4)return 2;
+  if(a.mode==='stand')return 3;
+  if(a.state==='working')return 1;
+  return 0}
+function sprite(a,alpha){
+  const f=fr[a.id]&&fr[a.id][frameFor(a)];if(!f)return;const m=manifest[a.id.replace('_','')].frames[frameFor(a)];
+  const h=home(a);let flip=a.mode==='walk'?!!a.face:(ROOMS[a.room].desks[a.id]||{}).flip||false;
+  let by=0;if(a.state==='working'&&a.mode!=='walk')by=Math.sin(a.t*7+a.bob)*0.9;
+  const sc=(ROOMS[a.room].pk||K_C)*Math.max(.7,Math.min(1.6,470/manifest[a.id.replace('_','')].frames[3].h)),w=f.width*sc,hh=f.height*sc,x=a.x,y=a.y+by;
+  X.save();if(night)X.filter='brightness(.72) saturate(.9)';
+  shadow(a.x,a.y,Math.max(34,w*.62),night?.32:.28);
+  if(a.state==='waiting'){const p=.5+.5*Math.sin(a.t*4);X.strokeStyle=`rgba(245,184,74,${.5+.5*p})`;X.lineWidth=3;X.beginPath();X.ellipse(a.x,a.y+1,w*0.55+p*4,10+p*2,0,0,6.3);X.stroke()}
+  if(sel===a.id){X.strokeStyle='#fff';X.lineWidth=2;X.beginPath();X.ellipse(a.x,a.y+1,w*0.5,9,0,0,6.3);X.stroke()}
+  const rot=(a.mode==='walk'?0:((ROOMS[a.room].desks[a.id]||{}).rot||0))*Math.PI/180;X.translate(x,y);X.rotate(rot);if(flip)X.scale(-1,1);X.drawImage(f,-w/2,-hh,w,hh);X.restore();a.top=y-hh;
+}
+function label(a,placed){
+  const t=a.d.name+(a.d.kind==='intern'?' · Intern':'');X.font='600 18px DPComic,Fredoka,system-ui';const w=X.measureText(t).width+12,x=a.x;let y=a.top-6;
+  if(placed){for(let n=0;n<4;n++){const hit=placed.some(r=>Math.abs(r[0]-x)<(r[2]+w)/2+2&&Math.abs(r[1]-y)<26);if(!hit)break;y-=26}placed.push([x,y,w])}
+  X.fillStyle=a.d.kind==='intern'?'rgba(70,50,10,.82)':'rgba(8,14,18,.78)';X.beginPath();X.roundRect(x-w/2,y-23,w,25,8);X.fill();
+  X.fillStyle=a.d.kind==='intern'?'#f5b84a':'#e8eef0';X.textAlign='center';X.fillText(t,x,y-3);
+  {const T=performance.now()/1000;if(a.chat&&T>=a.chat[0]&&T<a.chat[1]&&props[7]&&a.state!=='waiting'){const bw=36,bb=Math.sin(T*5)*1.5;X.drawImage(props[7],x+w/2-6,y-52+bb,bw,bw*props[7].height/props[7].width)}}
+  if(a.state==='waiting'&&props[6]){const bw=40,bb=Math.sin(a.t*5)*2;X.drawImage(props[6],x-bw/2,y-62+bb,bw,bw*props[6].height/props[6].width)}
+  if(a.state==='working'&&a.mode!=='walk'&&props[4]){X.save();X.translate(x+w/2+8,y-8);X.rotate(a.t*2);X.drawImage(props[4],-8,-8,16,16);X.restore()}
+  if(night&&a.state==='idle'&&a.d.kind==='fixed'&&a.mode!=='walk'){X.fillStyle='#bcd';X.font='700 19px DPComic,Fredoka,system-ui';X.fillText('z',x+w/2+6,y-6+Math.sin(a.t*2)*2)}
+}
+function lights(){
+  if(!night)return;
+  X.save();X.globalCompositeOperation='lighter';
+  for(const a of Object.values(A)){if(a.room!==room||!a.d||a.state!=='working'||a.mode==='walk')continue;
+    const g=X.createRadialGradient(a.x,a.y-30,4,a.x,a.y-30,95);g.addColorStop(0,'rgba(255,190,90,.30)');g.addColorStop(1,'rgba(255,190,90,0)');X.fillStyle=g;X.fillRect(a.x-100,a.y-130,200,200)}
+  X.restore();
+}
+function rack(){ // the render rack glows while Nyx works
+  const n=A.nyx;if(room!=='rtc'||!n||!n.d||n.state!=='working')return;const o=ROOMS.rtc.objs.find(o=>o.k==='decor_appliances_12'),rp=ROOMS.rtc.rackPos;if(!(o&&o.box)&&!rp)return;
+  const cx=o&&o.box?o.box[0]+o.box[2]/2:rp[0],cy=o&&o.box?o.box[1]+o.box[3]/2:rp[1],p=0.55+0.25*Math.sin(performance.now()/400);X.save();X.globalCompositeOperation='lighter';
+  const g=X.createRadialGradient(cx,cy,6,cx,cy,120);g.addColorStop(0,`rgba(255,120,40,${p*(night?0.8:0.4)})`);g.addColorStop(1,'rgba(255,120,40,0)');X.fillStyle=g;X.fillRect(cx-130,cy-130,260,260);X.restore();
+}
+function fit(){const c=CR(room);if(!c)return;if(C.width!==c.w||C.height!==c.h){C.width=c.w;C.height=c.h}}
+function shadow(x,y,fw,a){ // flat iso footprint on the floor: its lowest corner is the sprite's lowest point, so the object stands on it
+  const fh=fw*.5;X.save();X.filter='blur(2.5px)';X.fillStyle=`rgba(10,12,18,${a})`;X.beginPath();X.moveTo(x,y+1);X.lineTo(x+fw/2,y-fh/2);X.lineTo(x,y-fh+1);X.lineTo(x-fw/2,y-fh/2);X.closePath();X.fill();X.restore()}
+const defScale=k=>k.startsWith('decor_wall')||k.startsWith('displays')?K_W:k.startsWith('decor')?K_D:k.startsWith('chair')?K_C:K_F;
+function objDraw(o,sheetScale){
+  const im=spr[o.k];if(!im)return;const sc=o.s||sheetScale,w=im.width*sc,h=im.height*sc;
+  X.save();if(night)X.filter='brightness(.66) saturate(.9)';{const al=o.a!=null?o.a:(o.k.startsWith('decor_glass')?.45:1);if(al<1)X.globalAlpha=al}
+  if(!o.wallItem&&!o.k.startsWith('decor_wall')&&!o.k.startsWith('displays')&&!o.e&&!o.k.startsWith('decor_glass')){shadow(o.x,o.y,Math.min(w*.92,150),night?.35:.30)}
+  X.translate(o.x,o.y-(o.e||0));if(o.flip)X.scale(-1,1);X.drawImage(im,-w/2,-h,w,h);X.restore();o.box=[o.x-w/2,o.y-(o.e||0)-h,w,h];
+}
+function clockDraw(o){ // flat clock tilted onto the wall plane, hands follow the PC time
+  const f=spr['clocks_'+o.face];if(!f)return;const hs=[spr['clocks_'+(3+o.face*3)],spr['clocks_'+(4+o.face*3)],spr['clocks_'+(5+o.face*3)]];
+  const d=o.d||74,k=d/f.width,t=new Date(),sec=t.getSeconds()+t.getMilliseconds()/1000,min=t.getMinutes()+sec/60,hr=(t.getHours()%12)+min/60;
+  const ex=o.w==='L'?[0.93,-0.37]:[0.93,0.37];
+  X.save();if(night)X.filter='brightness(.72)';
+  X.transform(ex[0],ex[1],0,1,o.x,o.y-d/2);X.scale(k,k);X.drawImage(f,-f.width/2,-f.height/2);
+  const ang=[hr*Math.PI/6,min*Math.PI/30,Math.floor(sec)*Math.PI/30];
+  hs.forEach((h,i)=>{if(!h)return;X.save();X.rotate(ang[i]);X.drawImage(h,-h.width/2,-(h.height-14));X.restore()});
+  X.restore();o.box=[o.x-d/2,o.y-d,d,d];
+}
+function displayDraw(o){ // wall TV: frame sprite tilted onto the wall, screen shows live activity (no text)
+  const f=spr['displays_'+(o.face||0)];if(!f)return;const d=o.d||130,k=d/f.width,h=f.height*k,T=performance.now()/1000;
+  const ex=o.w==='L'?[0.93,-0.37]:[0.93,0.37],working=Object.values(A).filter(a=>a.room===room&&a.d&&a.state==='working').length;
+  X.save();if(night)X.filter='brightness(.8)';X.transform(ex[0],ex[1],0,1,o.x,o.y-h/2);X.scale(k,k);X.drawImage(f,-f.width/2,-f.height/2);
+  const sx=-f.width/2+f.width*.045,sy=-f.height/2+f.height*.07,sw=f.width*.91,sh=f.height*.86;
+  X.beginPath();X.rect(sx,sy,sw,sh);X.clip();
+  const g=X.createLinearGradient(sx,sy,sx,sy+sh);g.addColorStop(0,working?'#0b3140':'#0c1418');g.addColorStop(1,working?'#0f4a52':'#10202a');X.fillStyle=g;X.fillRect(sx,sy,sw,sh);
+  if(working){const n=Math.min(5,working+1);for(let i=0;i<n;i++){const bw=sw*.78,by=sy+sh*.14+i*(sh*.15),p=.25+.6*(.5+.5*Math.sin(T*.8+i*1.7));
+      X.fillStyle='#ffffff18';X.fillRect(sx+sw*.11,by,bw,sh*.07);X.fillStyle=i%2?'#f5b84a':'#3fc7b0';X.fillRect(sx+sw*.11,by,bw*p,sh*.07)}}
+  else{const t=(T*20)%(sw+160);X.fillStyle='#3fc7b01f';X.fillRect(sx+t-160,sy,70,sh);X.fillStyle='#ffffff10';X.fillRect(sx+sw*.1,sy+sh*.4,sw*.8,sh*.04)}
+  X.restore();o.box=[o.x-d/2,o.y-h,d,h];
+}
+function occupied(rm,key,idx){ // is somebody sitting on this seat right now?
+  for(const a of Object.values(A)){if(a.room!==rm||!a.d||a.mode!=='sit'||a.path.length)continue;
+    if(idx==null){if(a.id===key)return true}else if(a.d.kind==='intern'&&a.seat===idx)return true}
+  return false}
+function draw(){
+  fit();const cr=CR(room)||{x:0,y:0};X.clearRect(0,0,C.width,C.height);X.save();X.translate(-cr.x,-cr.y);
+  const shellMode=ROOMS[room].bg==='shell',bgk=shellMode?room+'_S':room,bs=shellMode?SHS:1,im=night?img[bgk+'_n']:img[bgk];if(im){X.save();X.translate(PV[0],PV[1]);X.scale(bs,bs);X.translate(-PV[0],-PV[1]);X.drawImage(im,0,0);X.restore()}
+  const R=ROOMS[room];
+  for(const o of R.wall){if(o.hit)continue;if(o.clock){clockDraw(o);continue}o.wallItem=1;objDraw(o,K_W)}
+  for(const o of R.objs){if(o.clock)clockDraw(o);else if(o.display)displayDraw(o)}
+  rack();
+  const list=[];
+  for(const o of R.objs){if(o.clock||o.display)continue;list.push({y:o.y+(o.z||0),f:()=>objDraw(o,defScale(o.k))})}
+  const ppl=Object.values(A).filter(a=>a.room===room&&a.d);
+  for(const a of ppl)list.push({y:a.y+((R.desks[a.id]||{}).z||0),f:()=>sprite(a)});
+  list.sort((p,q)=>p.y-q.y);for(const it of list)it.f();
+  lights();{const placed=[];for(const a of ppl.slice().sort((p,q)=>q.y-p.y))label(a,placed)}
+  if(room==='lobby'){X.font='700 22px DPComic,Fredoka,system-ui';X.textAlign='center';
+    for(const o of R.wall){if(!o.go||!o.box)continue;const t=o.go==='rtc'?'RUN THE CLOCK':'DAD VIEW',ex=o.go==='rtc'?[0.93,-0.37]:[0.93,0.37];
+      const cx=o.box[0]+o.box[2]/2,cy=o.box[1]-14,w=X.measureText(t).width+22;
+      X.save();X.transform(ex[0],ex[1],0,1,cx,cy);X.fillStyle='rgba(8,14,18,.86)';X.beginPath();X.roundRect(-w/2,-17,w,32,8);X.fill();
+      X.strokeStyle=o.go==='rtc'?'#3fc7b0':'#f5b84a';X.lineWidth=2;X.stroke();X.fillStyle='#e8eef0';X.fillText(t,0,6);X.restore()}}
+  drawMarkers();X.restore();
+}
+// ---- seat editor: drag any marker onto its exact spot, Save writes dashboard/layout.json ----
+let EDIT=false,drag=null,selItem=null;
+const cvPt=e=>{const r=C.getBoundingClientRect(),k=C.width/r.width,cr=CR(room)||{x:0,y:0};return [(e.clientX-r.left)*k+cr.x,(e.clientY-r.top)*k+cr.y]};
+function markers(){const R=ROOMS[room],m=[];
+  for(const [id,d] of Object.entries(R.desks))m.push({o:d,t:'seat',label:(A[id]&&A[id].d?A[id].d.name:id)+(d.pose==='stand'?' (stand)':'')+(d.flip?' ⇋':'')+(d.rot?' '+d.rot+'°':'')+(d.z?' L'+d.z/12:'')});
+  R.guest.forEach((g,i)=>m.push({o:g,t:'guest',label:'G'+(i+1)}));
+  R.wall.forEach((w,i)=>{if(w.clock)m.push({o:w,t:'clock',label:'clock'})});
+  R.way.forEach((w,i)=>m.push({o:{get x(){return w[0]},set x(v){w[0]=v},get y(){return w[1]},set y(v){w[1]=v}},t:'way',label:'w'+(i+1)}));
+  return m}
+function drawMarkers(){if(!EDIT)return;X.save();
+  for(const o of ROOMS[room].objs){if(!o.box)continue;X.strokeStyle=o===selItem?'#ffffff':'#ffffff22';X.lineWidth=o===selItem?2.5:1;X.setLineDash(o===selItem?[]:[4,4]);X.strokeRect(o.box[0],o.box[1],o.box[2],o.box[3]);if(o.z){X.fillStyle='#fff';X.font='13px system-ui';X.fillText('layer '+(o.z>0?'+':'')+o.z/12,o.box[0]+4,o.box[1]+14)}}
+  X.setLineDash([]);X.font='600 15px DPComic,Fredoka,system-ui';X.textAlign='center';
+  for(const m of markers()){const c=m.t==='seat'?'#4ade80':m.t==='guest'?'#f5b84a':m.t==='clock'?'#ff7ad9':'#7cc4ff';
+    X.fillStyle=c+'55';X.strokeStyle=c;X.lineWidth=2;X.beginPath();X.arc(m.o.x,m.o.y,10,0,6.3);X.fill();X.stroke();
+    X.beginPath();X.moveTo(m.o.x-15,m.o.y);X.lineTo(m.o.x+15,m.o.y);X.moveTo(m.o.x,m.o.y-15);X.lineTo(m.o.x,m.o.y+15);X.stroke();
+    X.fillStyle='#000a';X.fillRect(m.o.x-28,m.o.y+12,56,18);X.fillStyle=c;X.fillText(m.label,m.o.x,m.o.y+26)}
+  X.restore()}
+C.addEventListener('pointerdown',e=>{if(!EDIT)return;const [x,y]=cvPt(e);let best=null,bd=26;for(const m of markers()){const d=Math.hypot(m.o.x-x,m.o.y-y);if(d<bd){bd=d;best=m}}
+  if(best){drag=best;selItem=null;C.setPointerCapture(e.pointerId);e.preventDefault();return}
+  let hit=null;for(const o of ROOMS[room].objs){if(!o.box)continue;const b=o.box;if(x>=b[0]&&x<=b[0]+b[2]&&y>=b[1]&&y<=b[1]+b[3]&&(!hit||o.y>=hit.y))hit=o}
+  selItem=hit;if(hit){drag={o:hit,dx:x-hit.x,dy:y-hit.y};C.setPointerCapture(e.pointerId);e.preventDefault()}});
+C.addEventListener('pointermove',e=>{if(!EDIT||!drag)return;const [x,y]=cvPt(e);drag.o.x=Math.round(x-(drag.dx||0));drag.o.y=Math.round(y-(drag.dy||0));
+  for(const a of Object.values(A))if(a.room===room&&a.d&&!a.path.length&&(ROOMS[room].desks[a.id]===drag.o)){a.x=drag.o.x;a.y=drag.o.y}});
+C.addEventListener('pointerup',()=>{drag=null});
+let hoverSeat=null;
+C.addEventListener('pointermove',e=>{if(!EDIT||drag)return;const [x,y]=cvPt(e);hoverSeat=null;for(const m of markers())if(m.t==='seat'&&Math.hypot(m.o.x-x,m.o.y-y)<30)hoverSeat=m.o});
+C.addEventListener('contextmenu',e=>{if(!EDIT)return;e.preventDefault();if(hoverSeat)hoverSeat.flip=!hoverSeat.flip});
+window.addEventListener('keydown',e=>{if(!EDIT)return;
+  if(selItem&&!hoverSeat){const R=ROOMS[room],o=selItem,k=e.key;
+    if(k==='Delete'||k==='Backspace'){R.objs=R.objs.filter(x=>x!==o);selItem=null;e.preventDefault()}
+    else if(k==='+'||k==='='){o.s=(o.s||defScale(o.k||'x'))*1.08;if(o.clock||o.display)o.d=(o.d||(o.display?130:74))*1.08}
+    else if(k==='-'||k==='_'){o.s=(o.s||defScale(o.k||'x'))*.92;if(o.clock||o.display)o.d=(o.d||(o.display?130:74))*.92}
+    else if(k==='f'||k==='F'){if(o.clock||o.display)o.w=o.w==='L'?'R':'L';else o.flip=!o.flip}
+    else if(k==='o'||k==='O'){o.a=Math.max(.15,(o.a!=null?o.a:(o.k&&o.k.startsWith('decor_glass')?.45:1))-.1)}
+    else if(k==='p'||k==='P'){o.a=Math.min(1,(o.a!=null?o.a:(o.k&&o.k.startsWith('decor_glass')?.45:1))+.1)}
+    else if(k==='d'||k==='D'){const c={...o,x:o.x+30,y:o.y+20};R.objs.push(c);selItem=c}
+    else if(k===']')o.z=(o.z||0)+12;else if(k==='[')o.z=(o.z||0)-12;
+    else if(k==='PageUp')o.e=(o.e||0)+4;else if(k==='PageDown')o.e=Math.max(0,(o.e||0)-4);
+    else if(k==='ArrowLeft'){o.x-=1;e.preventDefault()}else if(k==='ArrowRight'){o.x+=1;e.preventDefault()}else if(k==='ArrowUp'){o.y-=1;e.preventDefault()}else if(k==='ArrowDown'){o.y+=1;e.preventDefault()}
+    return}
+  if(!hoverSeat)return;
+  if(e.key===']'){hoverSeat.z=(hoverSeat.z||0)+12}if(e.key==='['){hoverSeat.z=(hoverSeat.z||0)-12}
+  if(e.key==='f'||e.key==='F')hoverSeat.flip=!hoverSeat.flip;
+  if(e.key==='q'||e.key==='Q')hoverSeat.rot=Math.max(-25,(hoverSeat.rot||0)-3);
+  if(e.key==='e'||e.key==='E')hoverSeat.rot=Math.min(25,(hoverSeat.rot||0)+3);
+  if(e.key==='r'||e.key==='R')hoverSeat.rot=0});
+C.addEventListener('dblclick',e=>{if(!EDIT)return;const [x,y]=cvPt(e);for(const m of markers())if(m.t==='seat'&&Math.hypot(m.o.x-x,m.o.y-y)<26){m.o.pose=m.o.pose==='sit'?'stand':'sit'}});
+function layoutOut(){const out={};for(const r of Object.keys(ROOMS)){const R=ROOMS[r];out[r]={desks:Object.fromEntries(Object.entries(R.desks).map(([k,d])=>[k,{x:d.x,y:d.y,pose:d.pose,flip:!!d.flip,rot:d.rot||0,z:d.z||0}])),guest:R.guest.map(g=>({x:g.x,y:g.y,h:g.h})),way:R.way.map(w=>[w[0],w[1]]),clocks:R.wall.filter(w=>w.clock).map(w=>({x:w.x,y:w.y,d:w.d})),bg:R.bg||'v2',items:R.objs.map(o=>({k:o.k,x:o.x,y:o.y,s:o.s,flip:!!o.flip,e:o.e,z:o.z,a:o.a,clock:o.clock,display:o.display,face:o.face,w:o.w,d:o.d}))}}return out}
+function applyLayout(L){for(const r of Object.keys(L||{})){const R=ROOMS[r];if(!R||!R.art2)continue;const l=L[r];
+  for(const [k,d] of Object.entries(l.desks||{}))if(R.desks[k])Object.assign(R.desks[k],d);
+  if(l.guest&&l.guest.length===R.guest.length)l.guest.forEach((g,i)=>Object.assign(R.guest[i],g));
+  if(l.way&&l.way.length===R.way.length)R.way=l.way.map(w=>w.slice());
+  if(l.bg)R.bg=l.bg;if(Array.isArray(l.items))R.objs=l.items.map(o=>({...o}));
+  if(l.clocks){const cw=R.wall.filter(w=>w.clock);l.clocks.forEach((c,i)=>{if(cw[i])Object.assign(cw[i],c)})}}}
+document.getElementById('bEdit').onclick=()=>{EDIT=!EDIT;document.getElementById('pal').style.display=EDIT?'block':'none';document.getElementById('bBg').style.display=EDIT?'':'none';syncBg();document.getElementById('bEdit').textContent=EDIT?'Stop editing':'Edit seats';document.getElementById('bSave').style.display=EDIT?'':'none';C.style.cursor=EDIT?'crosshair':''};
+document.getElementById('bSave').onclick=async()=>{const r=await fetch('/api/layout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(layoutOut())});
+  const b=document.getElementById('bSave');b.textContent=r.ok?'Saved ✓':'Save failed';setTimeout(()=>b.textContent='Save layout',1800)};
+// ---- palette: add any sprite to the room ----
+function syncBg(){document.getElementById('bBg').textContent='Background: '+(ROOMS[room].bg==='shell'?'bare shell':'painted')}
+document.getElementById('bBg').onclick=()=>{const R=ROOMS[room];R.bg=R.bg==='shell'?'v2':'shell';syncBg();document.getElementById('card').style.display='none'};
+function buildPal(){const el=document.getElementById('pal'),groups={};
+  for(const k of Object.keys(spr)){const sh=k.replace(/_\d+$/,'');if(sh==='clocks'&&+k.split('_').pop()>2)continue;(groups[sh]=groups[sh]||[]).push(k)}
+  let h='<div class="tip">Click a sprite to add it to this room. Drag to move. With it selected: <b>+ / -</b> size, <b>F</b> mirror, <b>D</b> duplicate, <b>O / P</b> more / less see-through (glass), <b>Delete</b> remove, <b>]</b> bring forward (also on a seat marker), <b>[</b> send back, <b>PageUp/PageDown</b> lift, arrows nudge 1px. Items sort by depth automatically. Seats, interns, walk spots and clocks are the coloured markers. Then <b>Save layout</b>.</div>';
+  for(const [sh,keys] of Object.entries(groups)){keys.sort((a,b)=>+a.split('_').pop()-+b.split('_').pop());h+=`<h5>${sh.replace(/_/g,' ')}</h5>`+keys.map(k=>`<button data-k="${k}" title="${k}"><img src="${B3}${k}.png"></button>`).join('')}
+  el.innerHTML=h;
+  el.onclick=e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.k,c=CR(room),R=ROOMS[room];
+    const o=k.startsWith('displays_')?{display:1,face:+k.split('_').pop(),w:'R',x:c.x+c.w/2,y:c.y+c.h/3,d:130,k:'display'}:k.startsWith('clocks_')?{clock:1,face:+k.split('_').pop(),w:'L',x:c.x+c.w/2,y:c.y+c.h/3,d:74,k:'clock'}:{k,x:Math.round(c.x+c.w/2),y:Math.round(c.y+c.h/2)};
+    R.objs.push(o);selItem=o}}
+let last=performance.now();
+function loop(t){const dt=Math.min(.1,(t-last)/1000);last=t;update(dt);draw();requestAnimationFrame(loop)}
+function setNight(){const m=document.getElementById('light').value;night=m==='night'||(m==='auto'&&(S.local_hour<7||S.local_hour>=19))}
+async function poll(){try{const d=PUBLIC?pubState():await (await fetch('/api/state')).json();sync(d);setNight();
+  const mp=document.getElementById('mode');mp.textContent=d.live?'LIVE':'NO LIVE SIGNAL';mp.className='pill '+(d.live?'live':'off');if(PUBLIC&&d.demoRunning){mp.textContent='DEMO RUNNING';mp.className='pill demo'}
+  document.getElementById('demo').style.display=d.demo?'':'none';badges();side()}catch(e){}}
+function badges(){
+  const cnt={lobby:0,rtc:0,dadview:0},wait={lobby:0,rtc:0,dadview:0};
+  for(const d of S.agents){const r=roomOf(d);if(d.state==='working')cnt[r]++;if(d.state==='waiting')wait[r]++}
+  for(const el of document.querySelectorAll('#tabs a')){const r=el.dataset.r,b=el.querySelector('.b');
+    b.textContent=wait[r]?`${cnt[r]} · ${wait[r]} waiting`:cnt[r];b.className='b '+(wait[r]?'w':cnt[r]?'':'z');el.classList.toggle('on',r===room)}
+}
+const RN={lobby:'Lobby',rtc:'Run the Clock',dadview:'Dad View'};
+function fmt(t){const s=Math.max(0,Math.floor(Date.now()/1000-t));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function esc(t){return String(t==null?'':t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function side(){
+  const mine=S.agents.filter(d=>roomOf(d)===room),wt=mine.filter(d=>d.state==='waiting'),wk=mine.filter(d=>d.state==='working');
+  const other=S.agents.filter(d=>d.state==='waiting'&&roomOf(d)!==room);
+  const it=(d,cls,sub,ex)=>`<button class="it ${cls}" data-id="${d.id}">${ex?'<span class="e">'+esc(ex)+'</span>':''}<b>${esc(d.name)}</b><small>${esc(sub)}</small></button>`;
+  let h=`<div class="grp"><h4>Needs you · ${RN[room]}</h4>`+(wt.length?wt.map(d=>it(d,'w',(d.job&&d.job.text)||d.role,'')).join(''):'<div class="none">Nothing waiting on you here.</div>')+'</div>';
+  if(other.length)h+=`<div class="grp"><div class="more" data-go="${roomOf(other[0])}">${other.length} waiting in ${RN[roomOf(other[0])]}</div></div>`;
+  h+=`<div class="grp"><h4>Working now</h4>`+(wk.length?wk.map(d=>it(d,'',d.role+(d.job&&d.job.stage?' · '+d.job.stage:''),d.job&&d.job.started_at?fmt(d.job.started_at):'')).join(''):'<div class="none">Nobody is running a job in this room.</div>')+'</div>';
+  const idle=mine.filter(d=>d.state==='idle').length;h+=`<div class="none">${idle} at ease</div>`;
+  document.getElementById('side').innerHTML=h}
+function linkify(t){return esc(t).replace(/analyzemyoffer\.com/gi,m=>'<a href="https://analyzemyoffer.com" target="_blank" rel="noopener noreferrer">'+m+'</a>')}
+function showCard(a){sel=a.id;const d=a.d,c=document.getElementById('card');c.style.display='block';
+  document.getElementById('cn').textContent=d.name;
+  document.getElementById('cs').textContent=d.role+' · '+(d.kind==='intern'?'Intern':({run_the_clock:'Run the Clock',dad_view:'Dad View',lobby:'Reception'})[d.office]);
+  const st=document.getElementById('cst');st.textContent=(night&&d.state==='idle'&&d.kind==='fixed')?'asleep':d.state;st.className='st '+st.textContent;
+  document.getElementById('cw').innerHTML=linkify(d.work);document.getElementById('cp').innerHTML=linkify(d.persona);document.getElementById('cx2').innerHTML=linkify(d.extra);
+  document.getElementById('cj').textContent=d.job?('PRIVATE · '+(d.job.text||d.job.key||d.job.kind||'')):''}
+document.getElementById('side').addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){setRoom(g.dataset.go);return}const b=e.target.closest('.it');if(b&&A[b.dataset.id])showCard(A[b.dataset.id])});
+function setRoom(r){room=r;location.hash=r;document.getElementById('card').style.display='none';
+  const t=TITLES[r];document.getElementById('title').innerHTML=t[0]+'<small>'+t[1]+'</small>';sel=null;badges();side()}
+document.getElementById('tabs').addEventListener('click',e=>{const a=e.target.closest('a');if(a)setRoom(a.dataset.r)});
+C.addEventListener('click',e=>{if(EDIT)return;const r=C.getBoundingClientRect(),k=C.width/r.width,cr=CR(room)||{x:0,y:0},px=(e.clientX-r.left)*k+cr.x,py=(e.clientY-r.top)*k+cr.y;
+  let best=null,bd=48;for(const a of Object.values(A)){if(a.room!==room||!a.d)continue;const d=Math.hypot(a.x-px,(a.y-45)-py);if(d<bd){bd=d;best=a}}
+  if(!best){if(room==='lobby')for(const o of ROOMS.lobby.wall){if(o.go&&o.box&&px>=o.box[0]&&px<=o.box[0]+o.box[2]&&py>=o.box[1]&&py<=o.box[1]+o.box[3]){setRoom(o.go);return}}
+    document.getElementById('card').style.display='none';return}
+  showCard(best)});
+document.getElementById('cx').onclick=()=>{sel=null;document.getElementById('card').style.display='none'};
+// ---- public build: a sample day that runs entirely in the visitor's browser (no server, no real data) ----
+let DEMO=null;
+function pubState(){const now=Date.now()/1000;if(DEMO&&now>DEMO.end)DEMO=null;const out=[];
+  for(const a of (window.PUB_ROSTER||[])){
+    if(a.kind==='intern'){if(!DEMO||!DEMO.interns.includes(a.id))continue;out.push({...a,state:'working',at:DEMO.at[a.id],job:null})}
+    else{const w=DEMO&&DEMO.working.includes(a.id),q=DEMO&&DEMO.waiting.includes(a.id);out.push({...a,state:w?'working':q?'waiting':'idle',at:a.office,job:null})}}
+  return {ts:now,live:false,demo:!!DEMO,demoRunning:!!DEMO,agents:out,local_hour:new Date().getHours()}}
+function runPublicDemo(){DEMO={end:Date.now()/1000+50,working:['priya','julian','meena','nyx','hannah','walter','sam'],waiting:['adam'],
+  interns:['noor','finn','bo','gus','pip'],at:{noor:'run_the_clock',finn:'run_the_clock',bo:'run_the_clock',gus:'run_the_clock',pip:'dad_view'}};poll()}
+const post=u=>fetch(u,{method:'POST'}).then(()=>poll());
+document.getElementById('bRun').onclick=()=>{if(PUBLIC)runPublicDemo();else post('/api/demo/run')};document.getElementById('bWait').onclick=()=>post('/api/demo/waiting');document.getElementById('bClear').onclick=()=>post('/api/demo/clear');
+document.getElementById('light').onchange=setNight;
+window.addEventListener('hashchange',()=>{const r=(location.hash||'#lobby').slice(1);if(ROOMS[r]&&r!==room)setRoom(r)});
+window.A=A;window.ROOMS=ROOMS;
+loadAll().then(async()=>{try{applyLayout(PUBLIC?window.PUB_LAYOUT:await (await fetch('/api/layout')).json())}catch(e){}buildPal();setRoom(room);poll();setInterval(poll,1500);requestAnimationFrame(loop)});
+</script></body></html>
