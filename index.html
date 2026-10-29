@@ -39,7 +39,7 @@ canvas{display:block;margin:0 auto;max-width:100%;max-height:calc(100vh - 220px)
 #card .x{position:absolute;right:10px;top:6px;border:none;background:none;font-size:18px;color:var(--muted)}
 #pal{display:none;max-width:1560px;margin:8px auto 0;background:#0f181d;border:1px solid #35505c;border-radius:10px;padding:6px 10px;max-height:240px;overflow:auto}#pal h5{margin:8px 0 2px;color:var(--muted);font-size:16px;font-weight:400}#pal button{padding:2px;margin:2px;background:#ffffff14;border:1px solid #35505c;border-radius:6px}#pal img{height:56px;display:block}#pal .tip{color:var(--muted);font-size:17px;padding:2px 0 4px}
 body.pub #bEdit,body.pub #bSave,body.pub #bBg,body.pub #bWait,body.pub #bClear,body.pub header h1 span,body.pub #demo{display:none!important}
-body.public #side,body.public #note{display:none}body.public #wrap{grid-template-columns:1fr}
+body.public #note{display:none}
 #pubfoot{display:none;max-width:1560px;margin:10px auto 24px;padding:0 6px;color:var(--muted);font-size:20px}body.public #pubfoot{display:block}#pubfoot a{color:var(--teal)}
 #note{font-size:18px;margin:8px auto 16px;max-width:1560px;padding:0 4px;color:var(--muted);font-size:12px}
 </style></head><body>
@@ -437,12 +437,13 @@ C.addEventListener('click',e=>{if(EDIT)return;const r=C.getBoundingClientRect(),
 document.getElementById('cx').onclick=()=>{sel=null;document.getElementById('card').style.display='none'};
 // ---- public build: a sample day that runs entirely in the visitor's browser (no server, no real data) ----
 let DEMO=null;
+const STAGE_WORD={'Researcher':'research','Writer':'script','Visual Designer':'scenes','Night-Shift Renderer':'render','Story Writer':'story','Safety Checker':'safety','Editor':'assemble','Neutrality Reviewer':'review','Fact Checker':'fact check','Scene Builder Helper':'scene help','Image Matcher':'matching images'};
 function pubState(){const now=Date.now()/1000;if(DEMO&&now>DEMO.end)DEMO=null;const out=[];
   for(const a of (window.PUB_ROSTER||[])){
-    if(a.kind==='intern'){if(!DEMO||!DEMO.interns.includes(a.id))continue;out.push({...a,state:'working',at:DEMO.at[a.id],job:null})}
-    else{const w=DEMO&&DEMO.working.includes(a.id),q=DEMO&&DEMO.waiting.includes(a.id);out.push({...a,state:w?'working':q?'waiting':'idle',at:a.office,job:null})}}
+    if(a.kind==='intern'){if(!DEMO||!DEMO.interns.includes(a.id))continue;out.push({...a,state:'working',at:DEMO.at[a.id],job:{stage:STAGE_WORD[a.role]||'working',started_at:DEMO.start}})}
+    else{const w=DEMO&&DEMO.working.includes(a.id),q=DEMO&&DEMO.waiting.includes(a.id);out.push({...a,state:w?'working':q?'waiting':'idle',at:a.office,job:w?{stage:STAGE_WORD[a.role]||'working',started_at:DEMO.start}:q?{text:'Waiting for the boss to hand over pictures'}:null})}}
   return {ts:now,live:false,demo:!!DEMO,demoRunning:!!DEMO,agents:out,local_hour:new Date().getHours()}}
-function runPublicDemo(){DEMO={end:Date.now()/1000+50,working:['priya','julian','meena','nyx','hannah','walter','sam'],waiting:['adam'],
+function runPublicDemo(){DEMO={start:Date.now()/1000,end:Date.now()/1000+50,working:['priya','julian','meena','nyx','hannah','walter','sam'],waiting:['adam'],
   interns:['noor','finn','bo','gus','pip'],at:{noor:'run_the_clock',finn:'run_the_clock',bo:'run_the_clock',gus:'run_the_clock',pip:'dad_view'}};poll()}
 const post=u=>fetch(u,{method:'POST'}).then(()=>poll());
 document.getElementById('bRun').onclick=()=>{if(PUBLIC)runPublicDemo();else post('/api/demo/run')};document.getElementById('bWait').onclick=()=>post('/api/demo/waiting');document.getElementById('bClear').onclick=()=>post('/api/demo/clear');
